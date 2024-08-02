@@ -5,7 +5,8 @@ from .config import(
     LOGGING_PATH,
     HTTP_HOST,
     HTTP_PORT,
-    API_TOKEN
+    API_TOKEN,
+    THREADS_COUNT
 )
 from .logger import configurate_logger
 
@@ -17,5 +18,6 @@ __all__ = [
     "HTTP_HOST",
     "HTTP_PORT",
     "API_TOKEN",
+    "THREADS_COUNT",
     "configurate_logger"
 ]

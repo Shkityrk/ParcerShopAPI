@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from src.config.env import StrEnv, BoolEnv, IntEnv
+from src.config.env import StrEnv, IntEnv
 
 __all__ = [
     "PROJECT_NAME",
@@ -9,7 +9,8 @@ __all__ = [
     "LOGGING_PATH",
     "HTTP_HOST",
     "HTTP_PORT",
-    "API_TOKEN"
+    "API_TOKEN",
+    "THREADS_COUNT"
 ]
 
 PROJECT_NAME: str = StrEnv("PROJECT_NAME")
@@ -22,3 +23,5 @@ HTTP_HOST: str = StrEnv("HTTP_HOST")
 HTTP_PORT: int = IntEnv("HTTP_PORT")
 
 API_TOKEN: str = StrEnv("API_TOKEN")
+
+THREADS_COUNT: int = IntEnv("THREADS_COUNT")
