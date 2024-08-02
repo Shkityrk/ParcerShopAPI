@@ -18,8 +18,6 @@ class ProductsFileDownloader:
         self._sima_land_api = SimaLandAPI(threads_count)
 
     def download_products_in_thread(self) -> None:
-        products_count = self._sima_land_api.get_products_count()
-
         shift = TOTAL_IDS_COUNT // self._threads_count
         threads = []
         counter = 0
