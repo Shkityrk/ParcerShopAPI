@@ -1,7 +1,11 @@
 from threading import Thread
 
-from .sima_land_api import SimaLandAPI
+from loguru import logger
+
 from src.config import THREADS_COUNT, TOTAL_IDS_COUNT
+
+from .sima_land_api import SimaLandAPI
+
 
 __all__ = [
     "ProductsFileDownloader",
@@ -18,6 +22,8 @@ class ProductsFileDownloader:
         self._sima_land_api = SimaLandAPI(threads_count)
 
     def download_products_in_thread(self) -> None:
+        logger.info(f"Started downloading products in {self._threads_count} threads")
+
         shift = TOTAL_IDS_COUNT // self._threads_count
         threads = []
         counter = 0
@@ -36,6 +42,8 @@ class ProductsFileDownloader:
 
         with open("files/products.txt", "w") as file:
             file.write("\n".join(items).join("\n"))
+
+        logger.info(f"Finished downloading products in {self._threads_count} threads. Written to files/products.txt")
 
 
 def get_products_file_downloader() -> ProductsFileDownloader:

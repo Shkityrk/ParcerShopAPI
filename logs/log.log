@@ -1,0 +1,3 @@
+2024-08-02 21:31:08.712 | INFO     | src.utils.products_file_downloader:download_products_in_thread:25 - Started downloading products in 10 threads
+2024-08-02 21:33:24.872 | INFO     | src.utils.products_file_downloader:download_products_in_thread:25 - Started downloading products in 10 threads
+2024-08-02 21:44:20.414 | INFO     | src.utils.products_file_downloader:download_products_in_thread:25 - Started downloading products in 10 threads

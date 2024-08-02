@@ -17,9 +17,9 @@ class SimaLandAPI:
     def download_products_file(self, start_index: int, end_index: int, thread_id: int):
         items = []
         while start_index <= end_index:
-            response_json = requests.get(self._products_url+str(start_index)).json()
-            items = items + response_json["items"]
-
-            start_index = response_json["items"][-1]["id"]
+            response = requests.get(self._products_url+str(start_index))
+            if response.status_code == 200:
+                items = items + response.json()["items"]
+                start_index = response.json()["items"][-1]["id"]
 
         self.items_from_threads[thread_id] = items
