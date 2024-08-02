@@ -1,13 +1,15 @@
 [tool.poetry]
 name = "parcershopapi"
 version = "0.1.0"
-description = ""
-authors = ["Your Name <you@example.com>"]
+description = "Parcer for shop from JSON to XML"
+authors = ["qiisqwww qiisqwww@gmail.com"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
 loguru = "^0.7.2"
+fastapi = {extras = ["all"], version = "^0.112.0"}
+json2xml = "^5.0.2"
 
 
 [build-system]
