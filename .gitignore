@@ -1,5 +1,7 @@
 *.env
 *.crt
 *.key
+*.log
 /.idea
 /files
+/logs
