@@ -6,7 +6,8 @@ from .config import(
     HTTP_HOST,
     HTTP_PORT,
     API_TOKEN,
-    THREADS_COUNT
+    THREADS_COUNT,
+    TOTAL_IDS_COUNT
 )
 from .logger import configurate_logger
 
@@ -19,5 +20,6 @@ __all__ = [
     "HTTP_PORT",
     "API_TOKEN",
     "THREADS_COUNT",
+    "TOTAL_IDS_COUNT",
     "configurate_logger"
 ]

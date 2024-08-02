@@ -10,7 +10,8 @@ __all__ = [
     "HTTP_HOST",
     "HTTP_PORT",
     "API_TOKEN",
-    "THREADS_COUNT"
+    "THREADS_COUNT",
+    "TOTAL_IDS_COUNT"
 ]
 
 PROJECT_NAME: str = StrEnv("PROJECT_NAME")
@@ -25,3 +26,4 @@ HTTP_PORT: int = IntEnv("HTTP_PORT")
 API_TOKEN: str = StrEnv("API_TOKEN")
 
 THREADS_COUNT: int = IntEnv("THREADS_COUNT")
+TOTAL_IDS_COUNT: int = IntEnv("TOTAL_IDS_COUNT")

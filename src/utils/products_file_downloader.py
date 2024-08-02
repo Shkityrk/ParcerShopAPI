@@ -1,7 +1,7 @@
 from threading import Thread
 
 from .sima_land_api import SimaLandAPI
-from src.config import THREADS_COUNT
+from src.config import THREADS_COUNT, TOTAL_IDS_COUNT
 
 __all__ = [
     "ProductsFileDownloader",
@@ -20,10 +20,10 @@ class ProductsFileDownloader:
     def download_products_in_thread(self) -> None:
         products_count = self._sima_land_api.get_products_count()
 
-        shift = products_count // self._threads_count
+        shift = TOTAL_IDS_COUNT // self._threads_count
         threads = []
         counter = 0
-        for i in range(0, products_count, shift):
+        for i in range(0, TOTAL_IDS_COUNT, shift):
             threads.append(Thread(target=self._sima_land_api.download_products_file, args=(i, i+shift, counter)))
             threads[counter].start()
 
