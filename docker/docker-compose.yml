@@ -13,9 +13,15 @@ services:
   parser_shop_api:
     env_file:
       - ../.env/.env
+    depends_on:
+      - redis
     build:
       dockerfile: ./docker/Dockerfile
       context: ../
     volumes:
       - ../logs:/app/logs
       - ../files:/app/files
+
+  redis:
+    image: redis:7.2.3
+    restart: on-failure

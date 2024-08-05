@@ -9,6 +9,8 @@ __all__ = [
     "LOGGING_PATH",
     "HTTP_HOST",
     "HTTP_PORT",
+    "REDIS_HOST",
+    "REDIS_PORT",
     "API_TOKEN",
     "THREADS_COUNT",
     "TOTAL_IDS_COUNT"
@@ -22,6 +24,9 @@ LOGGING_PATH: Path = Path(StrEnv("LOGGING_PATH"))
 
 HTTP_HOST: str = StrEnv("HTTP_HOST")
 HTTP_PORT: int = IntEnv("HTTP_PORT")
+
+REDIS_HOST: str = StrEnv("REDIS_HOST")
+REDIS_PORT: int = IntEnv("REDIS_PORT")
 
 API_TOKEN: str = StrEnv("API_TOKEN")
 

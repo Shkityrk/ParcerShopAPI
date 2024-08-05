@@ -5,6 +5,8 @@ from .config import(
     LOGGING_PATH,
     HTTP_HOST,
     HTTP_PORT,
+    REDIS_HOST,
+    REDIS_PORT,
     API_TOKEN,
     THREADS_COUNT,
     TOTAL_IDS_COUNT
@@ -18,6 +20,8 @@ __all__ = [
     "LOGGING_PATH",
     "HTTP_HOST",
     "HTTP_PORT",
+    "REDIS_HOST",
+    "REDIS_PORT",
     "API_TOKEN",
     "THREADS_COUNT",
     "TOTAL_IDS_COUNT",

@@ -12,6 +12,7 @@ fastapi = {extras = ["all"], version = "^0.112.0"}
 json2xml = "^5.0.2"
 requests = "^2.32.3"
 apscheduler = "^3.10.4"
+redis = "^5.0.8"
 
 
 [build-system]
