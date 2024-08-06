@@ -45,7 +45,8 @@ class RedisService:
         await self._con.expire(RedisKeys.REQUESTS_COUNT, self._REQUESTS_COUNT_EXPIRE_TIME_SECONDS)
 
     async def get_total_ids_count(self) -> int | None:
-        return await self._con.get(RedisKeys.TOTAL_IDS_COUNT)
+        total_ids_count = await self._con.get(RedisKeys.TOTAL_IDS_COUNT)
+        return total_ids_count if not total_ids_count else int(total_ids_count)
 
     async def set_total_ids_count(self, total_ids_count: int) -> None:
         await self._con.set(

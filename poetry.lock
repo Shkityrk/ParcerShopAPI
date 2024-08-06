@@ -195,15 +195,18 @@ files = [
 ]
 
 [[package]]
-name = "defusedxml"
-version = "0.7.1"
-description = "XML bomb protection for Python stdlib modules"
+name = "dict2xml"
+version = "1.7.5"
+description = "Small utility to convert a python dictionary into an XML string"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+python-versions = ">=3.5"
 files = [
-    {file = "defusedxml-0.7.1-py2.py3-none-any.whl", hash = "sha256:a352e7e428770286cc899e2542b6cdaedb2b4953ff269a210103ec58f6198a61"},
-    {file = "defusedxml-0.7.1.tar.gz", hash = "sha256:1bb3032db185915b62d7c6209c5a8792be6a32ab2fedacc84e01b52c51aa3e69"},
+    {file = "dict2xml-1.7.5-py3-none-any.whl", hash = "sha256:f5380dcda0039807bff5543801009f36e5bfff355705863628835cb69f4711b6"},
+    {file = "dict2xml-1.7.5.tar.gz", hash = "sha256:e279f4707cf7733f1e56b2cea39e257c727b86f74e449deccc6a712a1cfe4e45"},
 ]
+
+[package.extras]
+tests = ["noseofyeti[black] (==2.4.4)", "pytest (==7.4.4)"]
 
 [[package]]
 name = "dnspython"
@@ -432,21 +435,6 @@ MarkupSafe = ">=2.0"
 
 [package.extras]
 i18n = ["Babel (>=2.7)"]
-
-[[package]]
-name = "json2xml"
-version = "5.0.2"
-description = "Simple Python Library to convert JSON to XML"
-optional = false
-python-versions = "*"
-files = [
-    {file = "json2xml-5.0.2-py3-none-any.whl", hash = "sha256:8f88284faadb574b4bcd66bb4840faca8b5570588d042a9b81fa6ce0c3cd65e9"},
-    {file = "json2xml-5.0.2.tar.gz", hash = "sha256:8082decce2927913b01dd6aac35ef17280df88b521aedeb5b7c0f2e4a7cef39a"},
-]
-
-[package.dependencies]
-defusedxml = "*"
-urllib3 = "*"
 
 [[package]]
 name = "loguru"
@@ -1426,4 +1414,4 @@ dev = ["black (>=19.3b0)", "pytest (>=4.6.2)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "8a2b592e29830e029f760278dd8210bbeda3a800eb36c2f30295460a08002d1b"
+content-hash = "90f0347eec5db83e5d909add2d27bceb172f4d3289e40e27fdcc82b1ba372f20"

@@ -1,11 +1,11 @@
-import json
 from threading import Thread
 from datetime import datetime
 
 from loguru import logger
+from dict2xml import Converter, DataSorter
 
 from src.config import THREADS_COUNT, TOTAL_IDS_COUNT
-from src.redis_service import get_redis_service, RedisService
+from src.redis_service import get_redis_service
 
 from .sima_land_api import SimaLandAPI
 
@@ -35,44 +35,53 @@ class ItemsFileDownloader:
             await redis_service.set_total_ids_count(total_ids_count)
             # TODO: need a logic of changing TOTAL_IDS_COUNT in .env file using found value
 
+        #  total_ids_count = 1_000_000 (only for testing)
         threads = []
-        counter = 0
+        threads_counter = 0
 
         # Spreading threads on first part of ids
         index_limit_first_part = int(total_ids_count * 0.375)
         index_shift_first_part = index_limit_first_part // int(self._threads_count * 0.13)
-        for i in range(0, index_limit_first_part, index_shift_first_part):
+        for index_limit_left in range(0, index_limit_first_part, index_shift_first_part):
+            index_limit_right = index_limit_left + index_shift_first_part if threads_counter < index_limit_first_part \
+                else index_limit_first_part
             threads.append(Thread(
                 target=self._sima_land_api.download_items_file,
                 args=(
-                    i,
-                    i + index_shift_first_part if counter < index_limit_first_part else index_limit_first_part,
-                    counter
+                    index_limit_left,
+                    index_limit_right,
+                    threads_counter
                 )
             )
             )
 
-            logger.info(f"Thread ID: {counter} | Index start: {i} | Index end: {i + index_shift_first_part}")
+            logger.info(
+                f"Thread ID: {threads_counter} | Index start: {index_limit_left} | Index end: {index_limit_right}"
+            )
 
-            counter += 1
+            threads_counter += 1
 
         # Spreading threads on second part of ids
         index_start_second_part = index_limit_first_part
         index_limit_second_part = int(total_ids_count * 0.75)
         index_shift_second_part = (index_limit_second_part-index_start_second_part) // (self._threads_count // 3)
-        for i in range(index_start_second_part, index_limit_second_part, index_shift_second_part):
+        for index_limit_left in range(index_start_second_part, index_limit_second_part, index_shift_second_part):
+            index_limit_right = index_limit_left + index_shift_second_part if threads_counter < index_limit_second_part \
+                else index_limit_second_part
             threads.append(Thread(
                 target=self._sima_land_api.download_items_file,
                 args=(
-                    i,
-                    i + index_shift_second_part if counter < index_limit_second_part else index_limit_second_part,
-                    counter
+                    index_limit_left,
+                    index_limit_right,
+                    threads_counter
                 )
             )
             )
-            logger.info(f"Thread ID: {counter} | Index start: {i} | Index end: {i + index_shift_second_part}")
+            logger.info(
+                f"Thread ID: {threads_counter} | Index start: {index_limit_left} | Index end: {index_limit_right}"
+            )
 
-            counter += 1
+            threads_counter += 1
 
         # Spreading threads on third part of ids
         index_start_third_part = index_limit_second_part
@@ -82,19 +91,23 @@ class ItemsFileDownloader:
                 //
                 (self._threads_count - int(self._threads_count * 0.13) - 1 - (self._threads_count // 3))
         )
-        for i in range(index_start_third_part, index_limit_third_part, index_shift_third_part):
+        for index_limit_left in range(index_start_third_part, index_limit_third_part, index_shift_third_part):
+            index_limit_right = index_limit_left + index_shift_third_part if threads_counter < index_limit_third_part \
+                else index_limit_third_part
             threads.append(Thread(
                 target=self._sima_land_api.download_items_file,
                 args=(
-                    i,
-                    i + index_shift_third_part if counter < index_limit_third_part else index_limit_third_part,
-                    counter
+                    index_limit_left,
+                    index_limit_right,
+                    threads_counter
                 )
             )
             )
-            logger.info(f"Thread ID: {counter} | Index start: {i} | Index end: {i + index_shift_third_part}")
+            logger.info(
+                f"Thread ID: {threads_counter} | Index start: {index_limit_left} | Index end: {index_limit_left}"
+            )
 
-            counter += 1
+            threads_counter += 1
 
         # Starting all threads
         time_start = datetime.now()
@@ -113,12 +126,12 @@ class ItemsFileDownloader:
 
         logger.info(f"Downloaded info about {len(items)} items. Time taken: {(time_end - time_start)}")
 
-        # Writing items into file
-        items_json = {"items": items}
-        with open("files/items.json", "w", encoding="UTF-8") as file:
-            json.dump(items_json, file)
+        # Writing items into xml file
+        items_json = {"items": {"item": items}}
+        with open("files/items.xml", "w") as file:
+            file.write(Converter(wrap="response", indent="  ").build(items_json, data_sorter=DataSorter.never()))
 
-        logger.info(f"Info about products was written to files/items.json")
+        logger.info(f"Info about products was written to files/items.xml.")
 
 
 def get_items_file_downloader() -> ItemsFileDownloader:

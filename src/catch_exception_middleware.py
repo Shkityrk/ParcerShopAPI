@@ -11,5 +11,4 @@ async def catch_exception_middleware(request: Request, call_next):
         return await call_next(request)
     except Exception as e:
         print(e)
-        return JSONResponse({"detail": "Internal server error"},
-                            status_code=500)
+        return JSONResponse({"detail": "Internal server error"}, status_code=500)
