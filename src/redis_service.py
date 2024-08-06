@@ -1,4 +1,4 @@
-from typing import AsyncGenerator
+from enum import StrEnum, UNIQUE, verify
 
 import redis.asyncio as redis
 from loguru import logger
@@ -12,10 +12,17 @@ __all__ = [
 ]
 
 
+@verify(UNIQUE)
+class RedisKeys(StrEnum):
+    REQUESTS_COUNT = "requests_count"
+    TOTAL_IDS_COUNT = "total_ids_count"
+
+
 class RedisService:
     _con: Redis
-    _REQUESTS_COUNT_EXPIRE_TIME = 10
+    _REQUESTS_COUNT_EXPIRE_TIME_SECONDS = 10
     _MAX_REQUESTS_COUNT = 250
+    _TOTAL_IDS_COUNT_VALUE_EXPIRE_TIME_SECONDS = 60*60*24  # One day
     """
     Values above are set by API limits. 
     More: https://www.sima-land.ru/api/v3/help/
@@ -23,7 +30,6 @@ class RedisService:
 
     async def can_make_request(self) -> bool:
         requests_count = await self._increase_requests_count()
-        logger.info(f"Requests count now: {requests_count}")
 
         if requests_count > self._MAX_REQUESTS_COUNT - 10:
             return False
@@ -33,10 +39,20 @@ class RedisService:
         return True
 
     async def _increase_requests_count(self) -> int:
-        return await self._con.incr("requests_count")
+        return await self._con.incr(RedisKeys.REQUESTS_COUNT)
 
     async def _set_expire_time(self) -> None:
-        await self._con.expire("requests_count", self._REQUESTS_COUNT_EXPIRE_TIME)
+        await self._con.expire(RedisKeys.REQUESTS_COUNT, self._REQUESTS_COUNT_EXPIRE_TIME_SECONDS)
+
+    async def get_total_ids_count(self) -> int | None:
+        return await self._con.get(RedisKeys.TOTAL_IDS_COUNT)
+
+    async def set_total_ids_count(self, total_ids_count: int) -> None:
+        await self._con.set(
+            RedisKeys.TOTAL_IDS_COUNT,
+            total_ids_count,
+            ex=self._TOTAL_IDS_COUNT_VALUE_EXPIRE_TIME_SECONDS
+        )
 
     async def __aenter__(self) -> "RedisService":
         self._con = redis.Redis(
