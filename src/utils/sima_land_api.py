@@ -1,6 +1,9 @@
 from asyncio import sleep, run
+from typing import Any
 
 import requests
+import xml.etree.ElementTree as ET
+
 from loguru import logger
 
 from src.redis_service import get_redis_service
@@ -12,18 +15,22 @@ __all__ = [
 
 class SimaLandAPI:
     _items_url: str = "https://www.sima-land.ru/api/v3/item/?per_page=100&id-greater-than="
-    items_from_threads: list[list[dict]] = []
+    amount_of_items: int = 0
+    amount_of_exceptions: int = 0
 
     def __init__(self, threads_count: int):
         self.items_from_threads = [[] for _ in range(threads_count+1)]
 
-    def download_items_file(self, start_index: int, end_index: int, thread_id: int):
-        run(self._download_items_file(start_index, end_index, thread_id))
+    def download_items_file(self, start_index: int, end_index: int, thread_id: int) -> None:
+        with open(f"files/items_{thread_id}.xml", "w+") as file:
+            file.write("<response><items></items></response>")
 
-    async def _download_items_file(self, start_index: int, end_index: int, thread_id: int):
+        with open(f"files/items_{thread_id}.xml", "r") as file:
+            run(self._download_items_file(start_index, end_index, thread_id, file))
+
+    async def _download_items_file(self, start_index: int, end_index: int, thread_id: int, file) -> None:
         redis_service = await get_redis_service()
 
-        items = []
         while start_index <= end_index:
             if not await redis_service.can_make_request():
                 logger.info(f"Faced API limits in thread {thread_id}. Will sleep for 5 seconds.")
@@ -45,15 +52,40 @@ class SimaLandAPI:
 
             response_json = response.json()
 
-            for item in response_json["items"]:
-                if item["id"] > end_index:
-                    break
-                items.append(item)
+            try:
+                file.seek(0)
+                response_xml = ET.parse(file)
+                xml_items = response_xml.getroot().find("items")
+
+                for item in response_json["items"]:
+                    if item["id"] > end_index:
+                        break
+
+                    xml_item = ET.Element("item")
+                    self.add_item_to_items(item, xml_item)
+                    xml_items.append(xml_item)
+
+                    self.amount_of_items += 1
+
+                response_xml.write(f"files/items_{thread_id}.xml", encoding="utf-8")
+
+            except Exception as e:
+                logger.error(e)
 
             start_index = response_json["items"][-1]["id"]
             logger.info(f"Downloaded one of the parts in the thread {thread_id}...")
 
-        self.items_from_threads[thread_id] = items
+    def add_item_to_items(self, item: Any, items: ET.Element) -> None:
+        if isinstance(item, str | int):
+            items.text = str(item)
+
+        if isinstance(item, dict):
+            for key, value in item.items():
+                self.add_item_to_items(value, ET.SubElement(items, key))
+
+        if isinstance(item, list):
+            for it in item:
+                self.add_item_to_items(it, ET.SubElement(items, "item"))
 
     def find_total_ids_count(self, total_ids_count: int) -> int:
         try:

@@ -195,20 +195,6 @@ files = [
 ]
 
 [[package]]
-name = "dict2xml"
-version = "1.7.5"
-description = "Small utility to convert a python dictionary into an XML string"
-optional = false
-python-versions = ">=3.5"
-files = [
-    {file = "dict2xml-1.7.5-py3-none-any.whl", hash = "sha256:f5380dcda0039807bff5543801009f36e5bfff355705863628835cb69f4711b6"},
-    {file = "dict2xml-1.7.5.tar.gz", hash = "sha256:e279f4707cf7733f1e56b2cea39e257c727b86f74e449deccc6a712a1cfe4e45"},
-]
-
-[package.extras]
-tests = ["noseofyeti[black] (==2.4.4)", "pytest (==7.4.4)"]
-
-[[package]]
 name = "dnspython"
 version = "2.6.1"
 description = "DNS toolkit"
@@ -1414,4 +1400,4 @@ dev = ["black (>=19.3b0)", "pytest (>=4.6.2)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "90f0347eec5db83e5d909add2d27bceb172f4d3289e40e27fdcc82b1ba372f20"
+content-hash = "dde1fd69ca7a96840a74ee60f209f061ab48707343c221ae375194dbec10444d"

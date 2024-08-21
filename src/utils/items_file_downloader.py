@@ -1,8 +1,8 @@
 from threading import Thread
 from datetime import datetime
+import xml.etree.ElementTree as ET
 
 from loguru import logger
-from dict2xml import Converter, DataSorter
 
 from src.config import THREADS_COUNT, TOTAL_IDS_COUNT
 from src.redis_service import get_redis_service
@@ -35,9 +35,11 @@ class ItemsFileDownloader:
             await redis_service.set_total_ids_count(total_ids_count)
             # TODO: need a logic of changing TOTAL_IDS_COUNT in .env file using found value
 
-        #  total_ids_count = 1_000_000 (only for testing)
+        # ONLY FOR TESTING:
+        # total_ids_count = 1000000
+
         threads = []
-        threads_counter = 0
+        threads_counter = 1
 
         # Spreading threads on first part of ids
         index_limit_first_part = int(total_ids_count * 0.375)
@@ -119,19 +121,13 @@ class ItemsFileDownloader:
             thread.join()
         time_end = datetime.now()
 
-        # Getting the final list of items
-        items = []
-        for i in range(self._threads_count):
-            items = items + self._sima_land_api.items_from_threads[i]
+        logger.info(
+            f"Downloaded info about {self._sima_land_api.amount_of_items} items "
+            f"(plus {self._sima_land_api.amount_of_exceptions} with exceptions)."
+            f"Time taken: {(time_end - time_start)}"
+        )
 
-        logger.info(f"Downloaded info about {len(items)} items. Time taken: {(time_end - time_start)}")
-
-        # Writing items into xml file
-        items_json = {"items": {"item": items}}
-        with open("files/items.xml", "w") as file:
-            file.write(Converter(wrap="response", indent="  ").build(items_json, data_sorter=DataSorter.never()))
-
-        logger.info(f"Info about products was written to files/items.xml.")
+        logger.info(f"Info about products was written to files/items_1-150.xml.")
 
 
 def get_items_file_downloader() -> ItemsFileDownloader:
